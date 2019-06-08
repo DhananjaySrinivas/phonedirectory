@@ -3,7 +3,7 @@
 #include <string>
 #include <fstream>
 using namespace std;
-const char* phonebook_filename = "phone_book.txt";
+const char* pfn = "phone_book.txt";
 enum groups {Family, Friends, Colleagues, VIP, Others};
 struct contact_info
 {
@@ -23,13 +23,11 @@ contact_info* contact_find(string);
 void contact_show(contact_info);	
 void contact_find_show_delete();	
 void contact_find_show();		
-void phonebook_save();			
-void phonebook_load();			
+void phonebook_save();		
 
 int main()
 {
 	
-	phonebook_load();
 	char ch;
 	do
 	{
@@ -219,8 +217,8 @@ void contact_find_show()
 void phonebook_save()
 {
 	ofstream phonebook_file;
-	phonebook_file.open(phonebook_filename);
-	cout << "Writing " << N_entries << " records to " << phonebook_filename << " ..." << endl;
+	phonebook_file.open(pfn);
+	cout << "Writing " << N_entries << " records to " << pfn << " ..." << endl;
 	phonebook_file << N_entries << endl;
 	contact_info* current_item=phonebook;
 	while (current_item != NULL)
@@ -239,37 +237,4 @@ void phonebook_save()
 		current_item = current_item->next_element;
 	}
 	phonebook_file.close();
-}
-void phonebook_load()
-{
-	ifstream phonebook_file;
-	phonebook_file.open(phonebook_filename);
-	if(!phonebook_file.is_open())
-	{
-		cout << "Phonebook file could not be openned !!!" << endl;
-	} else
-	{
-		phonebook_file >> N_entries;
-		contact_info** previous=&phonebook;
-		string text;
-		getline (phonebook_file,text);
-		cout << "Reading " << N_entries << " of contact records..." << endl;
-		for (int i=0;i<N_entries;i++)
-		{
-			contact_info* new_entry = new contact_info;
-			getline (phonebook_file,text);
-			getline (phonebook_file,new_entry->contact_name);
-			getline (phonebook_file,new_entry->phone_number);
-			getline (phonebook_file,text);
-			if      (text.compare("FAMILY") == 0)  	new_entry->contact_group=Family;
-			else if (text.compare("FRIENDS") == 0)	new_entry->contact_group=Friends;
-			else if (text.compare("COLLEAGUES")==0)	new_entry->contact_group=Colleagues;
-			else if (text.compare("VIP") == 0)	new_entry->contact_group=VIP;
-			else new_entry->contact_group=Others;
-			new_entry->next_element=NULL;
-			*previous=new_entry;
-			previous=&new_entry->next_element;
-		}
-		phonebook_file.close();
-	}
 }
